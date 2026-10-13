@@ -1,0 +1,35 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Users — Admin{% endblock %}
+{% block dashboard_content %}
+<h1>User management</h1>
+<form class="filter-bar" method="get">
+  <input type="text" name="q" value="{{ search }}" placeholder="Search users..." class="input">
+  <button class="btn btn-ghost">Search</button>
+</form>
+<table class="admin-table">
+  <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Active</th><th>Joined</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td>
+      <td>{{ 'Yes' if u.is_active_user else 'No' }}</td>
+      <td>{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+      <td class="action-cell">
+        <form method="post" action="{{ url_for('admin_toggle_user_active', user_id=u.id) }}" style="display:inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-ghost btn-sm">{{ 'Activate' if not u.is_active_user else 'Suspend' }}</button>
+        </form>
+        <form method="post" action="{{ url_for('admin_toggle_admin', user_id=u.id) }}" style="display:inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-ghost btn-sm">{{ 'Make admin' if u.role == 'user' else 'Demote' }}</button>
+        </form>
+        <form method="post" action="{{ url_for('admin_delete_user', user_id=u.id) }}" style="display:inline" class="confirm-delete">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-danger btn-sm">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

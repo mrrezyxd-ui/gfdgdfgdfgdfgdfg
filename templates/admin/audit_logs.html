@@ -1,0 +1,19 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Audit logs{% endblock %}
+{% block dashboard_content %}
+<h1>Audit logs</h1>
+<table class="admin-table">
+  <thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Target</th><th>IP</th></tr></thead>
+  <tbody>
+    {% for log in logs %}
+    <tr>
+      <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+      <td>{{ log.actor_username or '—' }}</td>
+      <td>{{ log.action }}</td>
+      <td>{{ log.target_type }} #{{ log.target_id or '—' }}</td>
+      <td>{{ log.ip_address or '—' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

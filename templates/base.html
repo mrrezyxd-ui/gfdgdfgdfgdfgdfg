@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ current_user.preferences.theme if current_user.is_authenticated and current_user.preferences else default_theme }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{ site_description }}">
+  <title>{% block title %}{{ site_name }}{% endblock %}</title>
+  <style>:root { --accent: {{ accent_color }}; }</style>
+  {% if favicon_url %}
+  <link rel="icon" type="image/png" href="/uploads/{{ favicon_url }}">
+  {% else %}
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}">
+  {% endif %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-container" id="flash-container">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}<button class="flash-close" onclick="this.parentElement.remove()">×</button></div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block layout %}{% endblock %}
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <p class="copyright-credit">
+        <img class="copyright-portrait"
+             src="{{ url_for('static', filename='images/copyright-holder.jpe') }}"
+             alt="Portrait of {{ copyright_owner }}">
+        <span class="copyright-details">
+          <span>© {{ current_year }} Copyright claimed by {{ copyright_owner }}. All rights reserved.</span>
+          <span class="copyright-description">Md. Rakibul Hasan is a student at Daffodil International University . He is currently studying in BSc. in Computer Science and Engeneering.</span>
+        </span>
+      </p>
+      {% if footer_text %}<p class="footer-text">{{ footer_text }}</p>{% endif %}
+    </div>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

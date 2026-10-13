@@ -1,0 +1,27 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Categories — Admin{% endblock %}
+{% block dashboard_content %}
+<h1>Global categories</h1>
+<form method="post" class="inline-form">
+  {{ form.csrf_token() }}
+  {{ form.name(class='input', placeholder='Category name') }}
+  {{ form.description(class='input', placeholder='Description') }}
+  {{ form.submit(class='btn btn-primary') }}
+</form>
+<table class="admin-table">
+  <thead><tr><th>Name</th><th>Description</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for c in categories %}
+    <tr>
+      <td>{{ c.name }}</td><td>{{ c.description }}</td>
+      <td>
+        <form method="post" action="{{ url_for('admin_delete_category', cat_id=c.id) }}" class="confirm-delete" style="display:inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-danger btn-sm">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

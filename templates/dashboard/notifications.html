@@ -1,0 +1,32 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Notifications — {{ site_name }}{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-header">
+  <h1>Notifications</h1>
+  <form method="post" action="{{ url_for('mark_all_read') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-ghost">Mark all read</button>
+  </form>
+</div>
+{% if notifications %}
+<ul class="notif-list">
+  {% for n in notifications %}
+  <li class="notif-item {{ 'unread' if not n.is_read }}">
+    <div>
+      <strong>{{ n.title }}</strong>
+      <p class="muted">{{ n.message }}</p>
+      <span class="meta">{{ n.created_at.strftime('%b %d, %H:%M') }}</span>
+    </div>
+    {% if not n.is_read %}
+    <form method="post" action="{{ url_for('mark_notification_read', nid=n.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn-ghost btn-sm">Mark read</button>
+    </form>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="empty-state"><p>No notifications yet.</p></div>
+{% endif %}
+{% endblock %}

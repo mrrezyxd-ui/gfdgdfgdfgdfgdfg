@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Create account — {{ site_name }}{% endblock %}
+{% block layout %}
+<div class="auth-shell">
+  <div class="auth-card">
+    <a href="{{ url_for('landing') }}" class="back-link">← Back to home</a>
+    <h1>Create your account</h1>
+    <p class="muted">Start counting down to what matters.</p>
+    <form method="post" novalidate>
+      {{ form.csrf_token }}
+      <div class="form-field">{{ form.name.label }}{{ form.name(class='input') }}{% for e in form.name.errors %}<span class="error">{{ e }}</span>{% endfor %}</div>
+      <div class="form-field">{{ form.username.label }}{{ form.username(class='input') }}{% for e in form.username.errors %}<span class="error">{{ e }}</span>{% endfor %}</div>
+      <div class="form-field">{{ form.email.label }}{{ form.email(class='input') }}{% for e in form.email.errors %}<span class="error">{{ e }}</span>{% endfor %}</div>
+      <div class="form-field password-field">{{ form.password.label }}{{ form.password(class='input', id='password') }}<button type="button" class="password-toggle" onclick="togglePassword('password')">👁</button>{% for e in form.password.errors %}<span class="error">{{ e }}</span>{% endfor %}</div>
+      <div class="form-field password-field">{{ form.confirm_password.label }}{{ form.confirm_password(class='input', id='confirm') }}<button type="button" class="password-toggle" onclick="togglePassword('confirm')">👁</button>{% for e in form.confirm_password.errors %}<span class="error">{{ e }}</span>{% endfor %}</div>
+      {{ form.submit(class='btn btn-primary btn-block') }}
+    </form>
+    <p class="auth-footer">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function togglePassword(id) {
+  const el = document.getElementById(id);
+  if (el.type === 'password') { el.type = 'text'; } else { el.type = 'password'; }
+}
+</script>
+{% endblock %}

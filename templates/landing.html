@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}{{ site_name }} — {{ site_tagline }}{% endblock %}
+{% block layout %}
+<header class="site-nav">
+  <div class="container nav-inner">
+    <a class="brand" href="{{ url_for('landing') }}">
+      {% if logo_url %}
+      <img src="/uploads/{{ logo_url }}" alt="{{ site_name }}" class="brand-logo">
+      {% else %}
+      <span class="brand-mark"></span>
+      {% endif %}
+      <span class="brand-name">{{ site_name }}</span>
+    </a>
+    <nav class="nav-actions">
+      <a class="btn btn-ghost" href="{{ url_for('login') }}">Sign in</a>
+      {% if registration_enabled %}
+      <a class="btn btn-primary" href="{{ url_for('register') }}">Get started</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+<main class="landing">
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <h1>{{ settings.hero_title }}</h1>
+        <p>{{ settings.hero_subtitle }}</p>
+        <div class="hero-actions">
+          {% if registration_enabled %}
+          <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Create your account</a>
+          {% endif %}
+          <a class="btn btn-ghost btn-lg" href="{{ url_for('login') }}">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title">Plan everything that matters</h2>
+      <div class="feature-grid">
+        <div class="feature">
+          <div class="feature-icon">⏱</div>
+          <h3>Multiple countdowns</h3>
+          <p>Track exams, deadlines, birthdays, launches, and goals side by side — all updating live.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🎨</div>
+          <h3>Personalize each card</h3>
+          <p>Upload thumbnails, pick accent colors, set priorities, and organize with tags and categories.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔔</div>
+          <h3>Smart reminders</h3>
+          <p>Get notified before events arrive. Choose 5 minutes, 1 hour, or 1 day ahead.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🌐</div>
+          <h3>Timezone aware</h3>
+          <p>Pick a timezone per event. Countdowns calculate correctly across DST boundaries.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔒</div>
+          <h3>Private by default</h3>
+          <p>Only you see your events. Object-level ownership enforced on every request.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <h3>Fast and lightweight</h3>
+          <p>No heavy frontend build. Plain Flask, Jinja2, and a little JavaScript.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Admin profile{% endblock %}
+{% block dashboard_content %}
+<h1>Admin profile</h1>
+<form method="post" enctype="multipart/form-data">
+  <div class="form-field">
+    <label>Profile picture</label>
+    <input type="file" name="profile_picture" accept="image/jpeg,image/png,image/webp">
+    {% if current_user.profile_picture %}
+    <img src="/uploads/{{ current_user.profile_picture }}" class="avatar lg">
+    {% endif %}
+  </div>
+  <button class="btn btn-primary">Upload</button>
+</form>
+{% endblock %}

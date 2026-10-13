@@ -1,0 +1,34 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ event.title }} — {{ site_name }}{% endblock %}
+{% block dashboard_content %}
+<article class="event-view" style="--accent: {{ event.accent_color }}">
+  <div class="event-header">
+    <div>
+      <span class="card-category">{{ event.category.name if event.category else 'Uncategorized' }}</span>
+      <h1>{{ event.title }}</h1>
+      {% if event.subtitle %}<p class="card-subtitle">{{ event.subtitle }}</p>{% endif %}
+    </div>
+    <div class="event-actions">
+      <a class="btn btn-ghost" href="{{ url_for('edit_event', event_id=event.id) }}">Edit</a>
+      <a class="btn btn-ghost" href="{{ url_for('dashboard_index') }}">Back</a>
+    </div>
+  </div>
+  {% if event.thumbnail %}
+  <div class="event-hero" style="background-image: url('/uploads/{{ event.thumbnail }}')"></div>
+  {% endif %}
+  <div class="countdown-display large" data-target="{{ event.target_timestamp }}">
+    <div class="cd-unit"><span class="cd-num days">--</span><span class="cd-label">days</span></div>
+    <div class="cd-unit"><span class="cd-num hours">--</span><span class="cd-label">hours</span></div>
+    <div class="cd-unit"><span class="cd-num minutes">--</span><span class="cd-label">minutes</span></div>
+    <div class="cd-unit"><span class="cd-num seconds">--</span><span class="cd-label">seconds</span></div>
+  </div>
+  <dl class="meta-list">
+    <dt>Date</dt><dd>{{ event.event_date.strftime('%A, %B %d, %Y %H:%M') }} ({{ event.timezone_str }})</dd>
+    {% if event.location %}<dt>Location</dt><dd>{{ event.location }}</dd>{% endif %}
+    {% if event.target_url %}<dt>Link</dt><dd><a href="{{ event.target_url }}" target="_blank" rel="noopener">{{ event.target_url }}</a></dd>{% endif %}
+    <dt>Priority</dt><dd>{{ event.priority|capitalize }}</dd>
+    {% if event.tags %}<dt>Tags</dt><dd>{% for t in event.tags %}<span class="tag">{{ t.name }}</span>{% endfor %}</dd>{% endif %}
+    {% if event.description %}<dt>Description</dt><dd class="description">{{ event.description }}</dd>{% endif %}
+  </dl>
+</article>
+{% endblock %}

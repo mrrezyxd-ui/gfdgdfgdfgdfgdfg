@@ -1,0 +1,70 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Branding — Admin{% endblock %}
+{% block dashboard_content %}
+<h1>Branding & website settings</h1>
+<p class="muted">Save text, colors, logo, and favicon together with the button at the bottom of this form.</p>
+<form method="post" enctype="multipart/form-data">
+  {{ form.csrf_token() }}
+  {% if form.errors %}
+  <div class="flash flash-error" role="alert">
+    <div>
+      {% for field_name, errors in form.errors.items() %}
+        {% for error in errors %}
+        <p>{{ form[field_name].label.text }}: {{ error }}</p>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  <section class="settings-section">
+    <h2>Identity</h2>
+    <div class="form-field">{{ form.site_name.label }}{{ form.site_name(class='input') }}</div>
+    <div class="form-field">{{ form.site_tagline.label }}{{ form.site_tagline(class='input') }}</div>
+    <div class="form-field">{{ form.site_description.label }}{{ form.site_description(class='input', rows=3) }}</div>
+    <div class="form-row-2">
+      <div class="form-field">{{ form.hero_title.label }}{{ form.hero_title(class='input') }}</div>
+      <div class="form-field">{{ form.hero_subtitle.label }}{{ form.hero_subtitle(class='input', rows=3) }}</div>
+    </div>
+  </section>
+  <section class="settings-section">
+    <h2>Branding assets</h2>
+    <div class="form-row-2">
+      <div class="form-field">
+        <label>Logo</label>
+        <input type="file" name="logo" accept="image/jpeg,image/png,image/webp">
+        {% if settings.logo_url %}<p class="muted"><img src="/uploads/{{ settings.logo_url }}" style="max-height:40px"></p>{% endif %}
+      </div>
+      <div class="form-field">
+        <label>Favicon</label>
+        <input type="file" name="favicon" accept="image/jpeg,image/png,image/webp">
+        {% if settings.favicon_url %}<p class="muted"><img src="/uploads/{{ settings.favicon_url }}" style="max-height:32px"></p>{% endif %}
+      </div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-field">{{ form.accent_color.label }}{{ form.accent_color(class='input color-input', title='Choose the main site accent color') }}</div>
+      <div class="form-field">{{ form.default_theme.label }}{{ form.default_theme(class='input') }}</div>
+    </div>
+  </section>
+  <section class="settings-section">
+    <h2>Footer & legal</h2>
+    <div class="form-field">{{ form.footer_text.label }}{{ form.footer_text(class='input', rows=2) }}</div>
+    <div class="form-field">{{ form.copyright_owner.label }}{{ form.copyright_owner(class='input') }}</div>
+    <div class="form-field">{{ form.contact_email.label }}{{ form.contact_email(class='input') }}</div>
+    <div class="form-row-3">
+      <div class="form-field">{{ form.social_twitter.label }}{{ form.social_twitter(class='input') }}</div>
+      <div class="form-field">{{ form.social_github.label }}{{ form.social_github(class='input') }}</div>
+      <div class="form-field">{{ form.social_linkedin.label }}{{ form.social_linkedin(class='input') }}</div>
+    </div>
+  </section>
+  <section class="settings-section">
+    <h2>Operations</h2>
+    <div class="form-row-2">
+      <div class="form-field">{{ form.default_timezone.label }}{{ form.default_timezone(class='input') }}</div>
+      <div class="form-field">{{ form.max_upload_mb.label }}{{ form.max_upload_mb(class='input') }}</div>
+    </div>
+    <label class="checkbox-inline">{{ form.registration_enabled() }} {{ form.registration_enabled.label }}</label>
+    <label class="checkbox-inline">{{ form.maintenance_mode() }} {{ form.maintenance_mode.label }}</label>
+  </section>
+  {{ form.submit(class='btn btn-primary') }}
+</form>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block layout %}
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="sidebar-brand" href="{{ url_for('dashboard_index') }}">
+      {% if logo_url %}
+      <img src="/uploads/{{ logo_url }}" alt="{{ site_name }}" class="sidebar-logo">
+      {% else %}
+      <span class="brand-mark small"></span>
+      {% endif %}
+      <span>{{ site_name }}</span>
+    </a>
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('dashboard_index') }}" class="sidebar-link">Dashboard</a>
+      <a href="{{ url_for('new_event') }}" class="sidebar-link">New event</a>
+      <a href="{{ url_for('notifications') }}" class="sidebar-link">
+        Notifications
+        {% if unread_notifications > 0 %}<span class="badge">{{ unread_notifications }}</span>{% endif %}
+      </a>
+      <a href="{{ url_for('dashboard_settings') }}" class="sidebar-link">Settings</a>
+      {% if current_user.is_admin %}
+      <a href="{{ url_for('admin_overview') }}" class="sidebar-link admin-link">Admin panel</a>
+      <div class="sidebar-admin-links" aria-label="Administration">
+        <a href="{{ url_for('admin_users') }}" class="sidebar-link">Users</a>
+        <a href="{{ url_for('admin_ip_blocks') }}" class="sidebar-link">IP blocks</a>
+        <a href="{{ url_for('admin_branding') }}" class="sidebar-link">Website & branding</a>
+        <a href="{{ url_for('admin_categories') }}" class="sidebar-link">Categories</a>
+        <a href="{{ url_for('admin_smtp') }}" class="sidebar-link">Email settings</a>
+        <a href="{{ url_for('admin_audit_logs') }}" class="sidebar-link">Audit logs</a>
+      </div>
+      {% endif %}
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        {% if current_user.profile_picture %}
+        <img src="/uploads/{{ current_user.profile_picture }}" class="avatar">
+        {% else %}
+        <span class="avatar placeholder">{{ current_user.name[0]|upper }}</span>
+        {% endif %}
+        <div>
+          <div class="user-name">{{ current_user.name }}</div>
+          <div class="user-email muted">{{ current_user.email }}</div>
+        </div>
+      </div>
+      <a href="{{ url_for('logout') }}" class="btn btn-ghost btn-sm">Sign out</a>
+    </div>
+  </aside>
+  <main class="main-content">
+    {% block dashboard_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

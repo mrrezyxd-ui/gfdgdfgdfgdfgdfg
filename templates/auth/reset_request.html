@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Reset password — {{ site_name }}{% endblock %}
+{% block layout %}
+<div class="auth-shell">
+  <div class="auth-card">
+    <h1>Reset your password</h1>
+    <p class="muted">Enter your email and we'll send a reset link.</p>
+    <form method="post" novalidate>
+      {{ form.csrf_token }}
+      <div class="form-field">{{ form.email.label }}{{ form.email(class='input') }}</div>
+      {{ form.submit(class='btn btn-primary btn-block') }}
+    </form>
+    <p class="auth-footer"><a href="{{ url_for('login') }}">Back to sign in</a></p>
+  </div>
+</div>
+{% endblock %}

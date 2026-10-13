@@ -1,0 +1,66 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{% if mode == 'edit' %}Edit{% else %}New{% endif %} event — {{ site_name }}{% endblock %}
+{% block dashboard_content %}
+<h1>{% if mode == 'edit' %}Edit event{% else %}Create a countdown{% endif %}</h1>
+<form method="post" enctype="multipart/form-data" novalidate class="event-form">
+  {{ form.csrf_token }}
+  <div class="form-field">{{ form.title.label }}{{ form.title(class='input') }}</div>
+  <div class="form-field">{{ form.subtitle.label }}{{ form.subtitle(class='input') }}</div>
+  <div class="form-field">{{ form.description.label }}{{ form.description(class='input', rows=4) }}</div>
+  <div class="form-row-3">
+    <div class="form-field">{{ form.event_date.label }}{{ form.event_date(class='input') }}</div>
+    <div class="form-field">{{ form.timezone_str.label }}{{ form.timezone_str(class='input') }}</div>
+    <div class="form-field">{{ form.start_date.label }}{{ form.start_date(class='input') }}</div>
+  </div>
+  <div class="form-row-3">
+    <div class="form-field">{{ form.category_id.label }}{{ form.category_id(class='input') }}</div>
+    <div class="form-field">{{ form.priority.label }}{{ form.priority(class='input') }}</div>
+    <div class="form-field">{{ form.visibility.label }}{{ form.visibility(class='input') }}</div>
+  </div>
+  <div class="form-row-3">
+    <div class="form-field">{{ form.location.label }}{{ form.location(class='input') }}</div>
+    <div class="form-field">{{ form.target_url.label }}{{ form.target_url(class='input') }}</div>
+    <div class="form-field">{{ form.recurrence.label }}{{ form.recurrence(class='input') }}</div>
+  </div>
+  <div class="form-row-2">
+    <div class="form-field">{{ form.accent_color.label }}{{ form.accent_color(class='input color-input') }}</div>
+    <div class="form-field">
+      {{ form.thumbnail.label }}
+      {{ form.thumbnail(class='input', id='thumb-input', accept='image/jpeg,image/png,image/webp') }}
+      <div class="thumb-preview" id="thumb-preview"></div>
+      {% if mode == 'edit' and event.thumbnail %}
+      <p class="muted">Current: <a href="/uploads/{{ event.thumbnail }}" target="_blank">view</a> |
+        <form method="post" action="{{ url_for('delete_thumbnail', event_id=event.id) }}" class="confirm-delete" style="display:inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn-link">remove</button>
+        </form>
+      </p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="form-field">{{ form.tags.label }}{{ form.tags(class='input') }}</div>
+  {{ form.submit(class='btn btn-primary') }}
+  <a href="{{ url_for('dashboard_index') }}" class="btn btn-ghost">Cancel</a>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+  document.getElementById('thumb-input')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!['image/jpeg','image/png','image/webp'].includes(file.type)) {
+      alert('Only JPG, PNG, or WebP allowed.'); e.target.value = ''; return;
+    }
+    if (file.size > 16 * 1024 * 1024) {
+      alert('File too large (max 16MB).'); e.target.value = ''; return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const p = document.getElementById('thumb-preview');
+      p.style.backgroundImage = `url(${ev.target.result})`;
+      p.classList.add('has-image');
+    };
+    reader.readAsDataURL(file);
+  });
+</script>
+{% endblock %}

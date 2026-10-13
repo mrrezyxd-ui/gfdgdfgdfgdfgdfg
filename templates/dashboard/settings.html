@@ -1,0 +1,73 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Settings — {{ site_name }}{% endblock %}
+{% block dashboard_content %}
+<h1>Settings</h1>
+
+<section class="settings-section">
+  <h2>Profile</h2>
+  <form method="post" enctype="multipart/form-data">
+    {{ profile_form.csrf_token() }}
+    <input type="hidden" name="form_type" value="profile">
+    <div class="form-field">{{ profile_form.name.label }}{{ profile_form.name(class='input') }}</div>
+    <div class="form-field">{{ profile_form.username.label }}{{ profile_form.username(class='input') }}</div>
+    <div class="form-field">{{ profile_form.email.label }}{{ profile_form.email(class='input') }}</div>
+    <div class="form-field">
+      <label>Profile picture</label>
+      <input type="file" name="profile_picture" accept="image/jpeg,image/png,image/webp">
+      {% if current_user.profile_picture %}
+      <img src="/uploads/{{ current_user.profile_picture }}" class="avatar lg">
+      <form method="post" action="{{ url_for('delete_profile_picture') }}" class="confirm-delete" style="display:inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-ghost btn-sm">Remove picture</button>
+      </form>
+      {% endif %}
+    </div>
+    {{ profile_form.submit(class='btn btn-primary') }}
+  </form>
+</section>
+
+<section class="settings-section">
+  <h2>Preferences</h2>
+  <form method="post">
+    {{ pref_form.csrf_token() }}
+    <input type="hidden" name="form_type" value="preferences">
+    <div class="form-row-2">
+      <div class="form-field">{{ pref_form.timezone.label }}{{ pref_form.timezone(class='input') }}</div>
+      <div class="form-field">{{ pref_form.theme.label }}{{ pref_form.theme(class='input') }}</div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-field">{{ pref_form.date_format.label }}{{ pref_form.date_format(class='input') }}</div>
+      <div class="form-field">{{ pref_form.time_format.label }}{{ pref_form.time_format(class='input') }}</div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-field">{{ pref_form.default_view.label }}{{ pref_form.default_view(class='input') }}</div>
+      <div class="form-field">{{ pref_form.reminder_default.label }}{{ pref_form.reminder_default(class='input') }}</div>
+    </div>
+    <div class="form-field"><label class="checkbox-inline">{{ pref_form.email_notifications() }} {{ pref_form.email_notifications.label }}</label></div>
+    <div class="form-field"><label class="checkbox-inline">{{ pref_form.in_app_notifications() }} {{ pref_form.in_app_notifications.label }}</label></div>
+    {{ pref_form.submit(class='btn btn-primary') }}
+  </form>
+</section>
+
+<section class="settings-section">
+  <h2>Change password</h2>
+  <form method="post">
+    {{ pw_form.csrf_token() }}
+    <input type="hidden" name="form_type" value="password">
+    <div class="form-field">{{ pw_form.current_password.label }}{{ pw_form.current_password(class='input') }}</div>
+    <div class="form-field">{{ pw_form.new_password.label }}{{ pw_form.new_password(class='input') }}</div>
+    <div class="form-field">{{ pw_form.confirm.label }}{{ pw_form.confirm(class='input') }}</div>
+    {{ pw_form.submit(class='btn btn-primary') }}
+  </form>
+</section>
+
+<section class="settings-section danger-zone">
+  <h2>Delete account</h2>
+  <p class="muted">This permanently deletes your account and all events. This cannot be undone.</p>
+  <form method="post" action="{{ url_for('delete_account') }}" class="confirm-delete">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="password" name="confirm_password" placeholder="Enter your password" class="input" required>
+    <button class="btn btn-danger">Delete my account</button>
+  </form>
+</section>
+{% endblock %}

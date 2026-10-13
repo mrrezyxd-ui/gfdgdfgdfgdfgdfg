@@ -1,0 +1,114 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Dashboard — {{ site_name }}{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-header">
+  <div>
+    <h1>Hello, {{ current_user.name }}</h1>
+    <p class="muted" id="current-datetime"></p>
+  </div>
+  <a class="btn btn-primary" href="{{ url_for('new_event') }}"><span class="icon-plus">+</span> New countdown</a>
+</div>
+
+<div class="stat-row">
+  <div class="stat-card"><div class="stat-num">{{ active_count }}</div><div class="stat-label">Active</div></div>
+  <div class="stat-card"><div class="stat-num">{{ today_count }}</div><div class="stat-label">Today</div></div>
+  <div class="stat-card"><div class="stat-num">{{ completed_count }}</div><div class="stat-label">Completed</div></div>
+</div>
+
+<form class="filter-bar" method="get">
+  <input type="text" name="q" value="{{ search }}" placeholder="Search events..." class="input">
+  <select name="category" class="input">
+    <option value="0">All categories</option>
+    {% for c in categories %}
+    <option value="{{ c.id }}" {% if c.id == selected_category %}selected{% endif %}>{{ c.name }}</option>
+    {% endfor %}
+  </select>
+  <select name="sort" class="input">
+    <option value="date_asc" {% if sort == 'date_asc' %}selected{% endif %}>Date ↑</option>
+    <option value="date_desc" {% if sort == 'date_desc' %}selected{% endif %}>Date ↓</option>
+    <option value="created_desc" {% if sort == 'created_desc' %}selected{% endif %}>Recent</option>
+  </select>
+  <select name="view" class="input" onchange="this.form.submit()">
+    <option value="grid" {% if view == 'grid' %}selected{% endif %}>Grid</option>
+    <option value="list" {% if view == 'list' %}selected{% endif %}>List</option>
+  </select>
+  <label class="checkbox-inline">
+    <input type="checkbox" name="archived" value="true" {% if show_archived %}checked{% endif %} onchange="this.form.submit()">
+    Show archived
+  </label>
+</form>
+
+{% if events %}
+<div class="countdown-grid" id="countdown-grid">
+  {% for e in events %}
+  <article class="countdown-card" data-event-id="{{ e.id }}" data-target="{{ e.target_timestamp }}" style="--accent: {{ e.accent_color }}">
+    <div class="card-bar" style="background: {{ e.accent_color }}"></div>
+    <div class="card-body">
+      <div class="card-top">
+        <div>
+          <div class="card-category">{{ e.category.name if e.category else 'Uncategorized' }}</div>
+          <h3 class="card-title">{{ e.title }}</h3>
+          {% if e.subtitle %}<p class="card-subtitle">{{ e.subtitle }}</p>{% endif %}
+        </div>
+        <div class="card-menu">
+          <details>
+            <summary>⋯</summary>
+            <div class="menu-dropdown">
+              <a href="{{ url_for('view_event', event_id=e.id) }}">View</a>
+              <a href="{{ url_for('edit_event', event_id=e.id) }}">Edit</a>
+              <form method="post" action="{{ url_for('duplicate_event', event_id=e.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">Duplicate</button>
+              </form>
+              <form method="post" action="{{ url_for('archive_event', event_id=e.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">{{ 'Restore' if e.is_archived else 'Archive' }}</button>
+              </form>
+              <form method="post" action="{{ url_for('delete_event', event_id=e.id) }}" class="confirm-delete">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="danger">Delete</button>
+              </form>
+            </div>
+          </details>
+        </div>
+      </div>
+      {% if e.thumbnail %}
+      <div class="card-thumb" style="background-image: url('/uploads/{{ e.thumbnail }}')"></div>
+      {% else %}
+      <div class="card-thumb placeholder"></div>
+      {% endif %}
+      <div class="countdown-display" id="cd-{{ e.id }}">
+        <div class="cd-unit"><span class="cd-num days">--</span><span class="cd-label">days</span></div>
+        <div class="cd-unit"><span class="cd-num hours">--</span><span class="cd-label">hours</span></div>
+        <div class="cd-unit"><span class="cd-num minutes">--</span><span class="cd-label">min</span></div>
+        <div class="cd-unit"><span class="cd-num seconds">--</span><span class="cd-label">sec</span></div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-date">{{ e.event_date.strftime('%b %d, %Y %H:%M') }} {{ e.timezone_str }}</span>
+        {% if e.priority in ['high','urgent'] %}
+        <span class="priority priority-{{ e.priority }}">{{ e.priority }}</span>
+        {% endif %}
+      </div>
+      {% if e.start_date %}
+      <div class="progress-bar"><div class="progress-fill" style="width: {{ e.progress_percent()|round(1) }}%"></div></div>
+      {% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% if pagination.pages > 1 %}
+<nav class="pagination">
+  {% if pagination.has_prev %}<a href="{{ url_for('dashboard_index', page=pagination.prev_num, q=search, category=selected_category, sort=sort) }}">‹ Prev</a>{% endif %}
+  <span>Page {{ pagination.page }} of {{ pagination.pages }}</span>
+  {% if pagination.has_next %}<a href="{{ url_for('dashboard_index', page=pagination.next_num, q=search, category=selected_category, sort=sort) }}">Next ›</a>{% endif %}
+</nav>
+{% endif %}
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">📅</div>
+  <h2>No countdowns yet</h2>
+  <p>Create your first countdown and start tracking what matters.</p>
+  <a class="btn btn-primary" href="{{ url_for('new_event') }}">Create your first event</a>
+</div>
+{% endif %}
+{% endblock %}

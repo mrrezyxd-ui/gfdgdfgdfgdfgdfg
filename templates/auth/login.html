@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Sign in — {{ site_name }}{% endblock %}
+{% block layout %}
+<div class="auth-shell">
+  <div class="auth-card">
+    <a href="{{ url_for('landing') }}" class="back-link">← Back to home</a>
+    <h1>Welcome back</h1>
+    <p class="muted">Sign in to your {{ site_name }} account.</p>
+    <form method="post" novalidate>
+      {{ form.csrf_token }}
+      <div class="form-field">
+        {{ form.identifier.label }}
+        {{ form.identifier(autofocus=True, class='input') }}
+        {% for e in form.identifier.errors %}<span class="error">{{ e }}</span>{% endfor %}
+      </div>
+      <div class="form-field password-field">
+        {{ form.password.label }}
+        {{ form.password(class='input', id='password') }}
+        <button type="button" class="password-toggle" data-target="password" onclick="togglePassword('password')">👁</button>
+        {% for e in form.password.errors %}<span class="error">{{ e }}</span>{% endfor %}
+      </div>
+      <div class="form-row">
+        <label class="checkbox-inline">{{ form.remember() }} {{ form.remember.label }}</label>
+        <a href="{{ url_for('reset_request') }}" class="link">Forgot password?</a>
+      </div>
+      {{ form.submit(class='btn btn-primary btn-block') }}
+    </form>
+    <p class="auth-footer">Need an account? <a href="{{ url_for('register') }}">Create one</a></p>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function togglePassword(id) {
+  const el = document.getElementById(id);
+  if (el.type === 'password') { el.type = 'text'; } else { el.type = 'password'; }
+}
+</script>
+{% endblock %}

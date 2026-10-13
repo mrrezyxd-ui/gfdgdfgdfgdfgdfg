@@ -1,0 +1,18 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}SMTP settings{% endblock %}
+{% block dashboard_content %}
+<h1>SMTP configuration</h1>
+<p class="muted">Leave blank to disable email. Passwords are not shown after saving.</p>
+<form method="post">
+  {{ form.csrf_token() }}
+  <div class="form-row-2">
+    <div class="form-field">{{ form.mail_server.label }}{{ form.mail_server(class='input') }}</div>
+    <div class="form-field">{{ form.mail_port.label }}{{ form.mail_port(class='input') }}</div>
+  </div>
+  <div class="form-field">{{ form.mail_username.label }}{{ form.mail_username(class='input') }}</div>
+  <div class="form-field">{{ form.mail_password.label }}{{ form.mail_password(class='input', placeholder='••••••••') }}</div>
+  <label class="checkbox-inline">{{ form.mail_use_tls() }} {{ form.mail_use_tls.label }}</label>
+  <div class="form-field">{{ form.mail_default_sender.label }}{{ form.mail_default_sender(class='input') }}</div>
+  {{ form.submit(class='btn btn-primary') }}
+</form>
+{% endblock %}

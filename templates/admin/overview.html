@@ -1,0 +1,44 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Admin — {{ site_name }}{% endblock %}
+{% block dashboard_content %}
+<h1>Admin overview</h1>
+<div class="stat-row">
+  <div class="stat-card"><div class="stat-num">{{ total_users }}</div><div class="stat-label">Users</div></div>
+  <div class="stat-card"><div class="stat-num">{{ active_users }}</div><div class="stat-label">Active</div></div>
+  <div class="stat-card"><div class="stat-num">{{ total_events }}</div><div class="stat-label">Events</div></div>
+  <div class="stat-card"><div class="stat-num">{{ upcoming }}</div><div class="stat-label">Upcoming</div></div>
+</div>
+<section class="admin-section">
+  <h2>Manage website</h2>
+  <div class="admin-quick-links">
+    <a class="btn btn-ghost" href="{{ url_for('admin_branding') }}">Website name, logo & settings</a>
+    <a class="btn btn-ghost" href="{{ url_for('admin_users') }}">Users & suspensions</a>
+    <a class="btn btn-ghost" href="{{ url_for('admin_ip_blocks') }}">IP blocks</a>
+    <a class="btn btn-ghost" href="{{ url_for('admin_categories') }}">Categories</a>
+    <a class="btn btn-ghost" href="{{ url_for('admin_smtp') }}">Email settings</a>
+    <a class="btn btn-ghost" href="{{ url_for('admin_audit_logs') }}">Audit logs</a>
+  </div>
+</section>
+<section class="admin-section">
+  <h2>Recent registrations</h2>
+  <table class="admin-table">
+    <thead><tr><th>User</th><th>Email</th><th>Joined</th></tr></thead>
+    <tbody>
+      {% for u in recent_users %}
+      <tr><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.created_at.strftime('%Y-%m-%d') }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+<section class="admin-section">
+  <h2>Recent audit logs</h2>
+  <table class="admin-table">
+    <thead><tr><th>Actor</th><th>Action</th><th>Target</th><th>Time</th></tr></thead>
+    <tbody>
+      {% for log in logs %}
+      <tr><td>{{ log.actor_username or '—' }}</td><td>{{ log.action }}</td><td>{{ log.target_type }} #{{ log.target_id or '—' }}</td><td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

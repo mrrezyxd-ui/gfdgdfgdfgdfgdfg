@@ -1,0 +1,46 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}IP blocks — Admin{% endblock %}
+{% block dashboard_content %}
+<h1>IP address blocks</h1>
+<p class="muted">Blocked addresses cannot access the site. Your current address is protected from accidental blocking. If the app is behind a proxy, configure trusted proxy handling so the client address is accurate.</p>
+
+<form method="post" class="settings-section ip-block-form">
+  {{ form.csrf_token() }}
+  <div class="form-row-2">
+    <div class="form-field">
+      {{ form.address.label }}
+      {{ form.address(class='input', placeholder='IPv4 or IPv6 address') }}
+      {% for error in form.address.errors %}<span class="error">{{ error }}</span>{% endfor %}
+    </div>
+    <div class="form-field">
+      {{ form.reason.label }}
+      {{ form.reason(class='input', placeholder='Optional reason') }}
+      {% for error in form.reason.errors %}<span class="error">{{ error }}</span>{% endfor %}
+    </div>
+  </div>
+  {{ form.submit(class='btn btn-danger') }}
+</form>
+
+<h2>Blocked addresses</h2>
+<table class="admin-table">
+  <thead><tr><th>Address</th><th>Reason</th><th>Blocked by</th><th>Date</th><th>Action</th></tr></thead>
+  <tbody>
+    {% for block in blocks %}
+    <tr>
+      <td>{{ block.address }}</td>
+      <td>{{ block.reason or '—' }}</td>
+      <td>{{ block.actor.username if block.actor else '—' }}</td>
+      <td>{{ block.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+      <td>
+        <form method="post" action="{{ url_for('admin_unblock_ip', block_id=block.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-ghost btn-sm" type="submit">Unblock</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No IP addresses are blocked.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
